@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :items, through: :ownerships
   has_many :wants
   has_many :want_items, through: :wants, class_name: 'Item',source: :item
+  has_many :haves, class_name:'Have'
+  has_many :have_items, through: :haves, class_name: 'Item',source: :item
   
   def want(item)
     self.wants.find_or_create_by(item_id: item.id)
@@ -24,6 +26,20 @@ class User < ApplicationRecord
   def want?(item)
     self.want_items.include?(item)
     #自分自身がwantしたアイテムがアイテム一覧に含まれているかどうか？
+  end
+  
+  def have(item)
+    self.haves.find_or_create_by(item_id: item.id)
+  end
+  
+  def unhave(item)
+    have=self.haves.find_or_create_by(item_id: item.id)
+    have.destroy if have
+  end
+  
+  def have?(item)
+    self.have_items.include?(item)
+    #自分自身がhaveしたアイテムがアイテム一覧に含まれているかどうか？
   end
   
 end
